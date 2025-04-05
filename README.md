@@ -1,4 +1,4 @@
-#**DESCRIPTION OF DIFFUSION PROCESS**#
+# **DESCRIPTION OF DIFFUSION PROCESS** #
 
 The goal is to essentially go from a known distribution to a target distribution using a diffusion process.
 The input data (image for example) can be represented as a probability distribution. The goal of the forward process modelled by the following equation:
@@ -9,7 +9,7 @@ The reverse process aims to essentially move from this gaussian distribution bac
 
 To go from gaussian noise to the target diffusion, we need to predict the mean and variance of the distribution at the immediately previous timestep to predict the distribution at that timestep. Then we repeate this over and over again until we get to time t=0, at which time we had the orginal input data i.e the target data. Thus, we obtain the distribution of the target data.
 
-#**EXPLANATION OF HOW WE OBTAIN THE TRAINING OBJECTIVE:**#
+# **EXPLANATION OF HOW WE OBTAIN THE TRAINING OBJECTIVE:** #
 
 Let us consider the predicted distribution to be represented by P(xt), where x is the input data at some timestep t.
 
