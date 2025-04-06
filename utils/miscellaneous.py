@@ -73,7 +73,7 @@ class MidBlock(nn.Module):
                 nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
 
             ),
-            nn.Seqeuntial(
+            nn.Sequential(
                 nn.GroupNorm(8, out_channels),
                 nn.SiLU(),
                 nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
