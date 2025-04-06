@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from ..utils.miscellaneous import DownSampleBlock, UpSampleBlock, MidBlock, get_time_embedding
+from utils.miscellaneous import UpSampleBlock, DownSampleBlock, MidBlock, get_time_embedding
+
 class Unet(nn.Module):
     def __init__(self, im_channels):
         self.down_channels = [32, 64, 128, 256]
