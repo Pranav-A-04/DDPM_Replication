@@ -19,8 +19,8 @@ def train(args):
             print(err)
     print(config)
     
-    diffusion_config=config['diffusion_params']
     dataset_config=config['dataset_params']
+    diffusion_config=config['diffusion_params']
     model_config=config['model_params']
     train_config=config['train_params']
     
@@ -63,7 +63,7 @@ def train(args):
             t = torch.randint(0, diffusion_config['num_timesteps'], (im.shape[0],)).to(device) #get random timestep and project as a vector of same dimension as image height
             
             #add noise to im
-            noisy_im = scheduler.add_noise(im, t)
+            noisy_im = scheduler.add_noise(im, noise, t)
             
             #predict the noise to be removed while going backward
             noise_prediction = model(noisy_im, t)
@@ -72,9 +72,9 @@ def train(args):
             losses.append(loss.item())
             loss.backward()
             optimizer.step()
-            
-            print(f'Epoch:{epoch+1} | Loss : {np.mean(losses)}')
-            
+        
+        # Print epoch stats and save checkpoint once per epoch
+        print(f'Epoch:{epoch+1} | Loss : {np.mean(losses)}')
         torch.save(model.state_dict(), os.path.join(train_config['task_name'], train_config['ckpt_name']))
     print('Done Training ...')      
 

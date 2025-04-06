@@ -31,7 +31,7 @@ def sample(model, scheduler, train_config, model_config, diffusion_config):
         ims = torch.clamp(x0_pred, -1., 1.).detach().cpu()
         ims = (ims + 1) / 2
         grid = make_grid(ims, nrow=train_config['num_grid_rows'])
-        img = torchvision.transforms.ToPILImage(grid)
+        img = torchvision.transforms.ToPILImage()(grid)
         if not os.path.exists(os.path.join(train_config['task_name'], 'samples')):
             os.mkdir(os.path.join(train_config['task_name'], 'samples'))
         

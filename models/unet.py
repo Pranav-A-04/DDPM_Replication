@@ -34,32 +34,30 @@ class Unet(nn.Module):
         #these are to be done on the final upsampled output.
         #why? -> conv => being done to get us to the same number of channels as input image. norm => to make sure input to conv isnt wild
         self.norm_out = nn.GroupNorm(8, 16)
+        self.SiLU = nn.SiLU()# Define SiLU activation function as a class attribute
         self.conv_out = nn.Conv2d(16, im_channels, kernel_size=3, padding=1)
         
     def forward(self, x, t):
         out = self.conv_in(x)
-        t_emb = get_time_embedding(t)
+        t_emb = get_time_embedding(t, self.t_emb_dim)
         t_emb = self.t_proj(t_emb)
         
         #downsampling i.e encoder part
         down_outs=[] #need to save downblock outputs in a list so that it can be given to upsampled output via skip connection
         for down in self.downs:
-            print(out.shape)
             down_outs.append(out)
             out=down(out, t_emb)
         
         #no need to save mid outs in a list
         for mid in self.mids:
-            print(out.shape)
             out = mid(out, t_emb)
         
         for up in self.ups:
             down_out=down_outs.pop()
-            print(out.shape, down_out.shape)
             out = up(out, down_out, t_emb) 
             
         out = self.norm_out(out)
-        out = self.SiLU()(out)
+        out = self.SiLU(out)
         out = self.conv_out(out)
         
         return out
