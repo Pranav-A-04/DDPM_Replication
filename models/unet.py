@@ -29,7 +29,7 @@ class Unet(nn.Module):
         #why is inchannels here last downchannel*2?
         self.ups = nn.ModuleList([])
         for i in reversed(range(len(self.down_channels)-1)):
-            self.ups.append(UpSampleBlock(self.down_channels[i]*2, self.down_channels[i-1] if i!=0 else 16, self.t_emb_dim, num_heads=4))
+            self.ups.append(UpSampleBlock(self.down_channels[i]*2, self.down_channels[i-1] if i!=0 else 16, self.t_emb_dim, up_sample=self.down_sample[i], num_heads=4))
           
         #these are to be done on the final upsampled output.
         #why? -> conv => being done to get us to the same number of channels as input image. norm => to make sure input to conv isnt wild
