@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from ..utils.miscellaneous import DownSampleBlock, UpSampleBlock, MidBlock, get_time_embedding
 class Unet(nn.Module):
-    def __init__(self, in_channels):
+    def __init__(self, im_channels):
         self.down_channels = [32, 64, 128, 256]
         self.mid_channels = [256, 256, 128]
         self.t_emb_dim = 128
@@ -14,7 +14,7 @@ class Unet(nn.Module):
             nn.Linear(self.t_emb_dim, self.t_emb_dim)
         )
         self.up_sample = list(reversed(self.down_sample))
-        self.conv_in = nn.Conv2d(in_channels, self.down_channels[0], kernel_size=3, stride=1)
+        self.conv_in = nn.Conv2d(im_channels, self.down_channels[0], kernel_size=3, stride=1)
         
         self.downs = nn.ModuleList([])
         for i in range(len(self.down_channels)-1):
@@ -32,7 +32,7 @@ class Unet(nn.Module):
         #these are to be done on the final upsampled output.
         #why? -> conv => being done to get us to the same number of channels as input image. norm => to make sure input to conv isnt wild
         self.norm_out = nn.GroupNorm(8, 16)
-        self.conv_out = nn.Conv2d(16, in_channels, kernel_size=3, padding=1)
+        self.conv_out = nn.Conv2d(16, im_channels, kernel_size=3, padding=1)
         
     def forward(self, x, t):
         out = self.conv_in(x)
