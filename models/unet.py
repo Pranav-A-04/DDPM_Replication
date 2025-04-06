@@ -4,6 +4,7 @@ from utils.miscellaneous import UpSampleBlock, DownSampleBlock, MidBlock, get_ti
 
 class Unet(nn.Module):
     def __init__(self, im_channels):
+        super().__init__()
         self.down_channels = [32, 64, 128, 256]
         self.mid_channels = [256, 256, 128]
         self.t_emb_dim = 128
