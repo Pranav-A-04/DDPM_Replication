@@ -27,5 +27,5 @@ def extract_images(save_dir, csv_fname):
             
             
 if __name__ == '__main__':
-    extract_images('../data/train/images', '../kaggle/input/mnist-in-csv/mnist_train.csv')
-    extract_images('../data/test/images', '../kaggle/input/mnist-in-csv/mnist_test.csv')
+    extract_images('../data/train/images', '../../kaggle/input/mnist-in-csv/mnist_train.csv')
+    extract_images('../data/test/images', '../../kaggle/input/mnist-in-csv/mnist_test.csv')
