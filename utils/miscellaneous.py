@@ -55,7 +55,7 @@ class DownSampleBlock(nn.Module):
     in_attn=out.reshape(batch_size, channels, height*width)
     in_attn=self.attention_norm(in_attn)
     in_attn=in_attn.transpose(1,2)
-    out_attn=self.attention(in_attn, in_attn, in_attn)
+    out_attn, _ = self.attention(in_attn, in_attn, in_attn)
     out_attn=out_attn.transpose(1,2).reshape(batch_size, channels, height, width)
     out=out+out_attn
 
@@ -124,7 +124,7 @@ class MidBlock(nn.Module):
         in_attn=out.reshape(batch_size, channels, height*width)
         in_attn=self.attention_norm(in_attn)
         in_attn=in_attn.transpose(1,2)
-        out_attn=self.attention(in_attn, in_attn, in_attn)
+        out_attn, _ = self.attention(in_attn, in_attn, in_attn)
         out_attn=out_attn.transpose(1,2).reshape(batch_size, channels, height, width)
         out = out + out_attn
         
@@ -180,7 +180,7 @@ class UpSampleBlock(nn.Module):
         in_attn=out.reshape(batch_size, channels, height*width)
         in_attn=self.attention_norm(in_attn)
         in_attn=in_attn.transpose(1,2)
-        out_attn=self.attention(in_attn, in_attn, in_attn)
+        out_attn, _ = self.attention(in_attn, in_attn, in_attn)
         out_attn=out_attn.transpose(1,2).reshape(batch_size, channels, height, width)
         out = out + out_attn
         
