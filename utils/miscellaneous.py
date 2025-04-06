@@ -105,7 +105,7 @@ class MidBlock(nn.Module):
         self.attention=nn.MultiheadAttention(out_channels, num_heads, batch_first=True)
         self.residual_input_conv=nn.ModuleList([
             nn.Conv2d(in_channels, out_channels, kernel_size=1),
-            nn.Conv2d(in_channels, out_channels, kernel_size=1)
+            nn.Conv2d(out_channels, out_channels, kernel_size=1)
         ])
     
 
