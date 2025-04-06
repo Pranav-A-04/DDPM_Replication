@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import DataLoader
 from models.unet import Unet
 import os
-import tqdm
+from tqdm import tqdm
 import numpy as np
 from torch.optim import Adam
 from utils.noise_scheduler import LinearNoiseScheduler

@@ -3,7 +3,7 @@ import torch
 import os
 from models.unet import Unet
 from utils.noise_scheduler import LinearNoiseScheduler
-import tqdm
+from tqdm import tqdm
 import torchvision
 from torchvision.io import read_image
 from torchvision.utils import make_grid

@@ -2,7 +2,7 @@ from torch.utils.data import Dataset
 import torch
 import torchvision
 import numpy as np
-import tqdm
+from tqdm import tqdm
 import os
 import glob
 import PIL
