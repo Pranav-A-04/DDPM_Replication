@@ -75,7 +75,7 @@ def train(args):
             
             print(f'Epoch:{epoch+1} | Loss : {np.mean(losses)}')
             
-            torch.save(model.state_dict(), os.path.join(train_config['task_name'], train_config['ckpt_name']))
+        torch.save(model.state_dict(), os.path.join(train_config['task_name'], train_config['ckpt_name']))
     print('Done Training ...')      
 
 if __name__ == '__main__':
