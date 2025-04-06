@@ -56,7 +56,7 @@ def infer(args):
     
     #load model checkpoint
     
-    model = Unet(model_config).to(device)
+    model = Unet(model_config['im_channels']).to(device)
     model.load_state_dict(torch.load(os.path.join(train_config['task_name'], train_config['ckpt_name']), map_location=device))
     
     model.eval()
