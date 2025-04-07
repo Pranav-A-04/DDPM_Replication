@@ -19,7 +19,7 @@ To go from gaussian noise to the target diffusion, we need to predict the mean a
 
 # **RESULTS OF TRAINING ON MNIST DATASET**
 
-![MNIST Generation Results](/results/mnist_generation_results.gif)
+![MNIST Generation Results](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExczdmMHBkMnkyZ2htY2g5bHA5d2J3NW1tb2MzbzFqNTJqbGZxdnI3ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rkNoosb1ce4XlioA3V/giphy.gif)
 
 The above GIF shows the predictions made by the DDPM model on test data from the mnist dataset over a series of 1000 time steps i.e from t=1000 to t=0.
 
