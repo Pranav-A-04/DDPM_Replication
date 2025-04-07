@@ -9,7 +9,7 @@ is to convert this distribution into a gaussian distribution or normal distribut
 
 This can be rewritten as shown below using the reparameterization trick:
 
-$$ x_t = \sqrt{1 - \beta_t} x_{t-1} + \sqrt{\beta_t} \epsilon, \quad \epsilon \sim \mathcal{N}(0, \mathbf{I}) $$
+$$ x_t = \sqrt{1 - \beta_t} x_{t-1} + \sqrt{\beta_t} \epsilon \, \quad \epsilon \sim \mathcal{N}(0, \mathbf{I}) $$
 
 The reverse process aims to essentially move from this gaussian distribution back to the original distribution using the reverse diffusion process modelled by the following equation:
 
