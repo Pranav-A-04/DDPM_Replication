@@ -39,16 +39,17 @@ class DownSampleBlock(nn.Module):
                                     stride=2, padding=1) if self.down_sample else nn.Identity()
 
   def forward(self, x, t_emb):
-
+    out = x
     #RESNET BLOCK
-    out=self.resnet_conv_first(x)
+    resnet_input = out
+    out=self.resnet_conv_first(out)
 
     #time embedding
     out=out+self.t_emb_layers(t_emb)[:, :, None, None]
     out=self.resnet_conv_second(out)
 
     #residual input
-    out=out+self.residual_input_conv(x)
+    out=out+self.residual_input_conv(resnet_input)
 
     #ATTENTION BLOCK
     batch_size, channels, height, width=out.shape
@@ -165,7 +166,7 @@ class UpSampleBlock(nn.Module):
         
     def forward(self, x, out_down, t_emb):
         x = self.up_sample_conv(x)
-        x = torch.cat([x, out_down], dim=1) #skip connection
+        x = torch.cat([x, out_down], dim=1) #skip connection => getting dim error here
         out = x
     
         #resnet block
