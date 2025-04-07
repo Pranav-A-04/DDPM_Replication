@@ -42,19 +42,35 @@ class LinearNoiseScheduler:
         # Ensure t is on the correct device
         t = t.to(self.device)
         
-        x0=(xt-(self.sqrt_one_minus_alpha_cumprod[t]*noise_pred))/self.sqrt_alpha_cumprod[t]
-        x0=torch.clamp(x0, -1., 1.)
+        # Get batch size for reshaping
+        batch_size = xt.shape[0]
+        
+        # Reshape tensor coefficients for proper broadcasting
+        sqrt_one_minus_alpha_cumprod_t = self.sqrt_one_minus_alpha_cumprod[t].reshape(batch_size, 1, 1, 1)
+        sqrt_alpha_cumprod_t = self.sqrt_alpha_cumprod[t].reshape(batch_size, 1, 1, 1)
+        betas_t = self.betas[t].reshape(batch_size, 1, 1, 1)
+        alphas_t = self.alphas[t].reshape(batch_size, 1, 1, 1)
+        
+        # Calculate x0 using reshaped tensors for proper broadcasting
+        x0 = (xt - (sqrt_one_minus_alpha_cumprod_t * noise_pred)) / sqrt_alpha_cumprod_t
+        x0 = torch.clamp(x0, -1., 1.)
 
-        mean=xt-((self.betas[t]*noise_pred)/self.sqrt_one_minus_alpha_cumprod[t])
-        mean=mean/torch.sqrt(self.alphas[t])
+        # Calculate mean using reshaped tensors
+        mean = xt - ((betas_t * noise_pred) / sqrt_one_minus_alpha_cumprod_t)
+        mean = mean / torch.sqrt(alphas_t)
 
-        if(t==0):
+        if t[0] == 0:  # Assuming all elements in t are the same
             return mean, x0
         else:
-            variance=(self.betas[t]*(1-self.alphas_cumprod[t-1]))/(1-self.alphas_cumprod[t])
-            sigma=variance**0.5
-            z=torch.randn(xt.shape, device=xt.device)
-            return mean+sigma*z, x0
+            # Handle t-1 case with proper reshaping
+            t_prev = t - 1
+            alphas_cumprod_t = self.alphas_cumprod[t].reshape(batch_size, 1, 1, 1)
+            alphas_cumprod_t_prev = self.alphas_cumprod[t_prev].reshape(batch_size, 1, 1, 1)
+            
+            variance = (betas_t * (1 - alphas_cumprod_t_prev)) / (1 - alphas_cumprod_t)
+            sigma = torch.sqrt(variance)
+            z = torch.randn_like(xt)
+            return mean + sigma * z, x0
 
     
 
