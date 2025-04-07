@@ -24,10 +24,13 @@ def train(args):
     model_config=config['model_params']
     train_config=config['train_params']
     
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
     #noise scheduler
     scheduler = LinearNoiseScheduler(num_timesteps=diffusion_config['num_timesteps'], 
                                      beta_start=diffusion_config['beta_start'], 
-                                     beta_end=diffusion_config['beta_end'])
+                                     beta_end=diffusion_config['beta_end'],
+                                     device=device)
     
     #create dataset
     mnist = MnistDataset('train', im_path=dataset_config['im_path'])
@@ -35,21 +38,30 @@ def train(args):
     mnist_loader = DataLoader(mnist, batch_size=train_config['batch_size'], shuffle=True, num_workers=4)
     
     #instantiate model
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Unet(model_config['im_channels']).to(device)
+    model = Unet(model_config['im_channels'])
     if torch.cuda.device_count() > 1:
         print(f"Using {torch.cuda.device_count()} GPUs")
         model = torch.nn.DataParallel(model)
     model.to(device)
-    #model.train()
+    
     #create output directories
     if not os.path.exists(train_config['task_name']):
         os.mkdir(train_config['task_name'])
         
     #load checkpoint if found
-    if os.path.exists(os.path.join(train_config['task_name'], train_config['ckpt_name'])):
-        print("Found a checkpoint. Loading the checkpoint")
-        model.load_state_dict(torch.load(os.path.join(train_config['task_name'], train_config['ckpt_name']), map_location=device))
+    checkpoint_path = os.path.join(train_config['task_name'], train_config['ckpt_name'])
+    if os.path.exists(checkpoint_path):
+        try:
+            print("Found a checkpoint. Loading the checkpoint")
+            checkpoint = torch.load(checkpoint_path, map_location=device)
+            if isinstance(model, torch.nn.DataParallel):
+                model.module.load_state_dict(checkpoint)
+            else:
+                model.load_state_dict(checkpoint)
+            print("Successfully loaded checkpoint")
+        except Exception as e:
+            print(f"Error loading checkpoint: {e}")
+            print("Starting training from scratch")
         
     num_epochs = train_config['num_epochs']
     optimizer = Adam(model.parameters(), lr=train_config['lr'])

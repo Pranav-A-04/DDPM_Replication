@@ -22,10 +22,11 @@ def sample(model, scheduler, train_config, model_config, diffusion_config):
     
     for i in tqdm(reversed(range(diffusion_config['num_timesteps']))):
         #get the noise pred
-        noise_pred = model(xt, torch.as_tensor(i).unsqueeze(0).to(device))
+        t = torch.full((train_config['num_samples'],), i, device=device)
+        noise_pred = model(xt, t)
         
         #sample prev timestep
-        xt_1, x0_pred = scheduler.sample_prev_timestep(xt, torch.as_tensor(i).to(device), noise_pred)
+        xt_1, x0_pred = scheduler.sample_prev_timestep(xt, t, noise_pred)
         
         #save x0 at each step to see progression of prediction
         ims = torch.clamp(x0_pred, -1., 1.).detach().cpu()
@@ -67,7 +68,8 @@ def infer(args):
     #noise scheduler
     scheduler = LinearNoiseScheduler(num_timesteps=diffusion_config['num_timesteps'], 
                                      beta_start=diffusion_config['beta_start'], 
-                                     beta_end=diffusion_config['beta_end'])
+                                     beta_end=diffusion_config['beta_end'],
+                                     device=device)
     
     with torch.no_grad():
         sample(model, scheduler, train_config, model_config, diffusion_config)

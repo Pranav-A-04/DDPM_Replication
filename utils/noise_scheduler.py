@@ -1,19 +1,35 @@
 import torch
 import torch.nn as nn
 class LinearNoiseScheduler:
-    def __init__(self, num_timesteps, beta_start, beta_end):
+    def __init__(self, num_timesteps, beta_start, beta_end, device=torch.device('cpu')):
         self.num_timesteps = num_timesteps
         self.beta_start = beta_start
         self.beta_end = beta_end
+        self.device = device
 
         self.betas=torch.linspace(beta_start, beta_end, num_timesteps) #linear schedule going from beta_start to beta_end
         self.alphas=1-self.betas
         self.alphas_cumprod=torch.cumprod(self.alphas, dim=0)
         self.sqrt_alpha_cumprod=torch.sqrt(self.alphas_cumprod)
         self.sqrt_one_minus_alpha_cumprod=torch.sqrt(1-self.alphas_cumprod)
+        
+        # Move tensors to the specified device
+        self.to(device)
+    
+    def to(self, device):
+        self.device = device
+        self.betas = self.betas.to(device)
+        self.alphas = self.alphas.to(device)
+        self.alphas_cumprod = self.alphas_cumprod.to(device)
+        self.sqrt_alpha_cumprod = self.sqrt_alpha_cumprod.to(device)
+        self.sqrt_one_minus_alpha_cumprod = self.sqrt_one_minus_alpha_cumprod.to(device)
+        return self
 
     #forward process
     def add_noise(self, originial, noise, t):
+        # Ensure t is on the correct device
+        t = t.to(self.device)
+        
         original_shape=originial.shape
         batch_size=original_shape[0]
         sqrt_alpha_cumprod_t=self.sqrt_alpha_cumprod[t].reshape(batch_size, 1, 1, 1)
@@ -23,6 +39,9 @@ class LinearNoiseScheduler:
     
     #reverse process
     def sample_prev_timestep(self, xt, t, noise_pred):
+        # Ensure t is on the correct device
+        t = t.to(self.device)
+        
         x0=(xt-(self.sqrt_one_minus_alpha_cumprod[t]*noise_pred))/self.sqrt_alpha_cumprod[t]
         x0=torch.clamp(x0, -1., 1.)
 
@@ -34,7 +53,7 @@ class LinearNoiseScheduler:
         else:
             variance=(self.betas[t]*(1-self.alphas_cumprod[t-1]))/(1-self.alphas_cumprod[t])
             sigma=variance**0.5
-            z=torch.randn(xt.shape)
+            z=torch.randn(xt.shape, device=xt.device)
             return mean+sigma*z, x0
 
     
