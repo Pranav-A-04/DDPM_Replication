@@ -58,11 +58,24 @@ def infer(args):
     #load model checkpoint
     
     model = Unet(model_config['im_channels']).to(device)
-    model.load_state_dict(torch.load(os.path.join(train_config['task_name'], train_config['ckpt_name']), map_location=device))
+    # Load the state dict with the proper handling of module prefix
+    checkpoint = torch.load(os.path.join(train_config['task_name'], train_config['ckpt_name']), map_location=device)
+    
+    # Handle DataParallel saved weights by removing 'module.' prefix if present
+    if all(k.startswith('module.') for k in checkpoint.keys()):
+        # Create new OrderedDict without the 'module.' prefix
+        from collections import OrderedDict
+        new_state_dict = OrderedDict()
+        for k, v in checkpoint.items():
+            name = k[7:] # remove 'module.' prefix
+            new_state_dict[name] = v
+        model.load_state_dict(new_state_dict)
+    else:
+        model.load_state_dict(checkpoint)
+        
     if torch.cuda.device_count() > 1:
         print(f"Using {torch.cuda.device_count()} GPUs")
         model = torch.nn.DataParallel(model)
-    model.to(device)
     model.eval()
     
     #noise scheduler
