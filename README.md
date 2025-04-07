@@ -29,6 +29,6 @@ The above GIF shows the predictions made by the DDPM model on test data from the
 
 ## Final Generated Digits (t=0)
 
-<img src="/results/generated_digits.pngg" alt="Generated Digits" />
+<img src="/results/generated_digits.png" alt="Generated Digits" />
 
 The model successfully transforms pure Gaussian noise into recognizable MNIST digits through the reverse diffusion process.
