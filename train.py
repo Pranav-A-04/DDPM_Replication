@@ -37,6 +37,10 @@ def train(args):
     #instantiate model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Unet(model_config['im_channels']).to(device)
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs")
+        model = torch.nn.DataParallel(model)
+    model.to(device)
     #model.train()
     #create output directories
     if not os.path.exists(train_config['task_name']):

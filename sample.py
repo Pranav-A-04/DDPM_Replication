@@ -58,7 +58,10 @@ def infer(args):
     
     model = Unet(model_config['im_channels']).to(device)
     model.load_state_dict(torch.load(os.path.join(train_config['task_name'], train_config['ckpt_name']), map_location=device))
-    
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs")
+        model = torch.nn.DataParallel(model)
+    model.to(device)
     model.eval()
     
     #noise scheduler
