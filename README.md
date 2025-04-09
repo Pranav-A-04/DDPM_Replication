@@ -38,3 +38,39 @@ The above GIF shows the predictions made by the DDPM model on test data from the
 <img src="/results/generated_digits.png" alt="Generated Digits" />
 
 The model successfully transforms pure Gaussian noise into recognizable MNIST digits through the reverse diffusion process.
+
+# **TRAINING AND SAMPLING**
+To train the code on the mnist dataset:
+```
+python train.py --config default.yaml
+```
+
+Sampling:
+```
+python sample.py --config default.yaml
+```
+
+To train on any other dataset, first write dataloader, and make appropriate changes in the training script.
+
+# **PREPARING MNIST DATASET**
+Download the mnist train and test csvs from:
+[Link To Dataset](https://www.kaggle.com/datasets/oddrationale/mnist-in-csv)
+
+Extract the mnist images by running:
+```
+python utils/extract_mnist.py \
+--mnist_train_csv_path <path_to_training_csv> \
+--mnist_test_csv_path <path_to_testing_csv> \
+--mnist_train_images_path <path_to_store_training_images> \
+--mnist_test_images_path <path_to_store_testing_images>
+```
+If the args are not specified, code expects paths to be same as default paths defined in extract_mnist.py
+
+
+# **To-Do / Future Additions**
+1. Add Colab demo notebook
+2. Train on other datasets like CIFAR 10
+
+
+# **Citation**
+Based on the foundational work: [Ho et al., 2020 - Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239)

@@ -4,6 +4,7 @@ File to extract csv images from csv files for mnist dataset.
 
 import os
 import cv2
+import argparse
 from tqdm import tqdm
 import numpy as np
 import _csv as csv
@@ -27,5 +28,15 @@ def extract_images(save_dir, csv_fname):
             
             
 if __name__ == '__main__':
-    extract_images('/kaggle/working/DDPM_Replication/data/train/images', '/kaggle/input/mnist-in-csv/mnist_train.csv')
-    extract_images('/kaggle/working/DDPM_Replication/data/test/images', '/kaggle/input/mnist-in-csv/mnist_test.csv')
+    parser = argparse.ArgumentParser(description='Arguments for ddpm training')
+    parser.add_argument('--mnist_train_csv_path', dest='mnist_train_csv_path',
+                        default='/input/mnist-in-csv/mnist_train.csv', type=str)
+    parser.add_argument('--mnist_test_csv_path', dest='mnist_test_csv_path',
+                        default='/input/mnist-in-csv/mnist_test.csv', type=str)
+    parser.add_argument('--mnist_train_images_path', dest='mnist_train_images_path',
+                        default='/data/train/images', type=str)
+    parser.add_argument('--mnist_test_images_path', dest='mnist_test_images_path',
+                        default='/data/test/images', type=str)
+    args = parser.parse_args()
+    extract_images(args.mnist_train_images_path, args.mnist_train_csv_path)
+    extract_images(args.mnist_test_images_path, args.mnist_test_csv_path)
