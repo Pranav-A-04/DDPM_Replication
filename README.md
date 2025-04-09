@@ -66,6 +66,9 @@ python utils/extract_mnist.py \
 ```
 If the args are not specified, code expects paths to be same as default paths defined in extract_mnist.py
 
+# **Pre-trained Mnist Ckpt**
+You can sample directly using the pretrained model provided in the ckpt/ directory.
+
 
 # **To-Do / Future Additions**
 1. Add Colab demo notebook
